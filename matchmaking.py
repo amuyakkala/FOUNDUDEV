@@ -43,23 +43,43 @@ Please analyze these profiles and find the best match for the current user. Cons
 5. Overall team dynamic
 
 Format your response in markdown with the following sections:
-## Best Match
-[Name of the best match]
 
-## Match Score
-[Score between 0 and 1]
+## 🎯 Match Overview
+**Best Match:** [Name]  
+**Match Score:** [Score between 0 and 1]  
+**Quick Summary:** [One sentence explaining why this is a great match]
 
-## Why This Match Works
-[Detailed explanation of why this is a good match]
+## 💫 Why This Match Works
 
-## Shared Interests & Skills
-[List of shared interests and complementary skills]
+### 🤝 Shared Strengths
+- [Key strength 1]
+- [Key strength 2]
+- [Key strength 3]
 
-## Potential Collaboration Areas
-[Specific project ideas or areas where they could collaborate]
+### 🔄 Complementary Skills
+- [How they fill each other's gaps]
+- [Specific skill combinations]
+- [Unique value each brings]
 
-## Next Steps
-[Suggested next steps for the matched users]"""
+### 🎨 Project Synergy
+- [Main project alignment]
+- [Shared vision]
+- [Potential impact]
+
+### ⚡ Working Style
+- [Communication style]
+- [Collaboration approach]
+- [Team dynamics]
+
+## 🚀 Potential Projects
+1. [Project idea 1]
+2. [Project idea 2]
+3. [Project idea 3]
+
+## 📝 Next Steps
+1. [Immediate action item]
+2. [Short-term goal]
+3. [Long-term vision]"""
 
 def generate_user_summary(conversation_history: List[Dict]) -> str:
     """Generate a summary of a user based on their conversation history."""

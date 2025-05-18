@@ -1,8 +1,8 @@
 {
   "AMU": {
     "name": "AMU",
-    "conversation_count": 6,
-    "last_active": "2025-05-18T14:04:06.710284",
+    "conversation_count": 7,
+    "last_active": "2025-05-18T15:13:40.865461",
     "created_at": "2025-05-18T13:59:36.804999"
   },
   "PHIL": {
@@ -46,5 +46,29 @@
     "conversation_count": 5,
     "last_active": "2025-05-18T14:44:01.284574",
     "created_at": "2025-05-18T14:42:44.138200"
+  },
+  "amu": {
+    "name": "amu",
+    "conversation_count": 0,
+    "last_active": "2025-05-18T15:09:23.989322",
+    "created_at": "2025-05-18T15:09:23.989335"
+  },
+  "SAI": {
+    "name": "SAI",
+    "conversation_count": 5,
+    "last_active": "2025-05-18T15:15:16.686384",
+    "created_at": "2025-05-18T15:13:55.720822"
+  },
+  "PAVAN": {
+    "name": "PAVAN",
+    "conversation_count": 5,
+    "last_active": "2025-05-18T15:16:46.562198",
+    "created_at": "2025-05-18T15:15:39.283372"
+  },
+  "SUJI": {
+    "name": "SUJI",
+    "conversation_count": 1,
+    "last_active": "2025-05-18T15:34:50.023110",
+    "created_at": "2025-05-18T15:34:50.018133"
   }
 }

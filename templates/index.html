@@ -81,18 +81,125 @@
     <div class="toast-container" id="toastContainer"></div>
     
     <!-- Match Result Modal -->
-    <div class="modal-overlay" id="matchModal" style="display: none;">
-        <div class="modal">
+    <div class="modal-overlay" id="matchModal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Match Found! 🎉</h2>
-            </div>
-            <div class="modal-content" id="matchContent">
-                <!-- Match content will be populated dynamically -->
-            </div>
-            <div class="modal-footer">
-                <button class="match-button" id="closeModal">
-                    Close
+                <h2 class="modal-title">
+                    <i class="fas fa-heart"></i> Your Top Matches
+                </h2>
+                <button class="modal-close" onclick="closeMatchModal()">
+                    <i class="fas fa-times"></i>
                 </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="swipe-container">
+                    <div class="swipe-wrapper">
+                        <!-- SAI's Match Card -->
+                        <div class="match-card">
+                            <div class="card-header">
+                                <div class="match-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 class="match-name">SAI</h3>
+                                <div class="match-score">90% Match</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="match-section">
+                                    <h4><i class="fas fa-graduation-cap"></i> Shared Background</h4>
+                                    <p>Both graduated from University of Texas at Arlington</p>
+                                    <p>Strong foundation in AI and technology</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-handshake"></i> Perfect Match</h4>
+                                    <p>SAI needs an AI engineer with LLM/RAG expertise</p>
+                                    <p>PAVAN has exactly the skills needed!</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                    <p>Building AI agents for the blind</p>
+                                    <p>Combining SAI's vision with PAVAN's AI expertise</p>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="chat-button" onclick="startChat('SAI')">
+                                    <i class="fas fa-comments"></i> Start Chat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dr. Ava's Match Card -->
+                        <div class="match-card">
+                            <div class="card-header">
+                                <div class="match-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 class="match-name">Dr. Ava Thompson</h3>
+                                <div class="match-score">85% Match</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="match-section">
+                                    <h4><i class="fas fa-graduation-cap"></i> Background</h4>
+                                    <p>Looking for an AI/ML engineer to cofound her application</p>
+                                    <p>Strong academic background in AI/ML</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-handshake"></i> Skills Match</h4>
+                                    <p>Expertise in LLM, LangChain, and Vector DB</p>
+                                    <p>Perfect alignment with PAVAN's skills</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                    <p>AI/ML application development</p>
+                                    <p>Ready to start building innovative solutions</p>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="chat-button" onclick="startChat('Dr. Ava')">
+                                    <i class="fas fa-comments"></i> Start Chat
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Jordan's Match Card -->
+                        <div class="match-card">
+                            <div class="card-header">
+                                <div class="match-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <h3 class="match-name">Jordan Patel</h3>
+                                <div class="match-score">80% Match</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="match-section">
+                                    <h4><i class="fas fa-graduation-cap"></i> Background</h4>
+                                    <p>Seeking an AI/ML engineer for his application</p>
+                                    <p>Strong interest in AI and innovation</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-handshake"></i> Skills Match</h4>
+                                    <p>Interest in GPT-4 and RAG</p>
+                                    <p>Matches PAVAN's expertise perfectly</p>
+                                </div>
+                                <div class="match-section">
+                                    <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                    <p>Building innovative AI solutions</p>
+                                    <p>Ready to collaborate on exciting projects</p>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="chat-button" onclick="startChat('Jordan')">
+                                    <i class="fas fa-comments"></i> Start Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swipe-indicators">
+                        <span class="indicator active"></span>
+                        <span class="indicator"></span>
+                        <span class="indicator"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -142,6 +249,158 @@
 
         .logout-button i {
             font-size: 1.1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .swipe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .swipe-wrapper {
+            display: flex;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .match-card {
+            min-width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .card-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .match-avatar {
+            width: 80px;
+            height: 80px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .match-avatar i {
+            font-size: 32px;
+            color: #1976d2;
+        }
+
+        .match-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .match-score {
+            font-size: 20px;
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .card-content {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .match-section {
+            margin-bottom: 20px;
+        }
+
+        .match-section h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1976d2;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .match-section p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .card-footer {
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        .chat-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+
+        .chat-button:hover {
+            background: #1565c0;
+        }
+
+        .swipe-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: #1976d2;
         }
     </style>
 
@@ -336,47 +595,6 @@
             }, 250);
         }
 
-        // Function to find match
-        async function findMatch() {
-            try {
-                matchButton.disabled = true;
-                matchButton.innerHTML = '<div class="loading"></div>';
-                
-                const response = await fetch('/match', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        user_name: currentUser
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.error) {
-                    showToast(data.error, 'error');
-                    return;
-                }
-                
-                // Show match modal
-                matchContent.innerHTML = data.html_explanation;
-                matchModal.style.display = 'flex';
-                
-                // Add a small delay before triggering confetti
-                setTimeout(() => {
-                    triggerConfetti();
-                }, 100);
-                
-                showToast('Match found! 🎉');
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Failed to find match', 'error');
-            } finally {
-                matchButton.disabled = false;
-                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
-            }
-        }
-
         // State management
         let messageCount = 0;
         
@@ -391,9 +609,6 @@
         const menuButton = document.getElementById('menuButton');
         const sidebar = document.querySelector('.sidebar');
         const toastContainer = document.getElementById('toastContainer');
-        const matchModal = document.getElementById('matchModal');
-        const matchContent = document.getElementById('matchContent');
-        const closeModal = document.getElementById('closeModal');
         
         // Utility Functions
         function showToast(message, type = 'success') {
@@ -465,16 +680,6 @@
             sidebar.classList.toggle('active');
         });
         
-        closeModal.addEventListener('click', () => {
-            matchModal.style.display = 'none';
-            // Trigger a small burst of confetti when closing
-            confetti({
-                particleCount: 30,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        });
-        
         // Auto-resize textarea
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -495,6 +700,117 @@
         
         // Initialize chat interface on page load
         initializeChat();
+
+        // Function to find match
+        async function findMatch() {
+            try {
+                matchButton.disabled = true;
+                matchButton.innerHTML = '<div class="loading"></div>';
+                
+                const response = await fetch('/match', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_name: currentUser
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                // Show match modal
+                const modal = document.getElementById('matchModal');
+                modal.classList.add('show');
+                
+                // Initialize swipe functionality
+                let currentIndex = 0;
+                const wrapper = document.querySelector('.swipe-wrapper');
+                const cards = document.querySelectorAll('.match-card');
+                const indicators = document.querySelectorAll('.indicator');
+                
+                function updateSlide() {
+                    wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    indicators.forEach((indicator, index) => {
+                        indicator.classList.toggle('active', index === currentIndex);
+                    });
+                }
+                
+                // Touch events for swipe
+                let startX = 0;
+                let currentX = 0;
+                
+                wrapper.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+                
+                wrapper.addEventListener('touchmove', (e) => {
+                    currentX = e.touches[0].clientX;
+                    const diff = currentX - startX;
+                    wrapper.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diff}px))`;
+                });
+                
+                wrapper.addEventListener('touchend', () => {
+                    const diff = currentX - startX;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && currentIndex > 0) {
+                            currentIndex--;
+                        } else if (diff < 0 && currentIndex < cards.length - 1) {
+                            currentIndex++;
+                        }
+                    }
+                    updateSlide();
+                });
+                
+                // Click indicators
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateSlide();
+                    });
+                });
+                
+                // Add a small delay before triggering confetti
+                setTimeout(() => {
+                    triggerConfetti();
+                }, 100);
+                
+                showToast('Match found! 🎉');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to find match', 'error');
+            } finally {
+                matchButton.disabled = false;
+                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
+            }
+        }
+
+        function closeMatchModal() {
+            const modal = document.getElementById('matchModal');
+            modal.classList.remove('show');
+        }
+
+        function startChat(matchName) {
+            const messageInput = document.querySelector('.message-input');
+            const sendButton = document.querySelector('.send-button');
+            
+            messageInput.value = `Hi ${matchName}! I'd like to discuss our potential collaboration.`;
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            
+            closeMatchModal();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('matchModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeMatchModal();
+            }
+        });
     </script>
 </body>
 </html> 

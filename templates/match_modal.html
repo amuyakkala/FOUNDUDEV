@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 class="modal-title">
-                <i class="fas fa-heart"></i> Match Found!
+                <i class="fas fa-heart"></i> Your Top Matches
             </h2>
             <button class="modal-close" onclick="closeMatchModal()">
                 <i class="fas fa-times"></i>
@@ -10,54 +10,111 @@
         </div>
         
         <div class="modal-body">
-            <div class="match-profile">
-                <div class="match-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h3 class="match-name" id="matchName"></h3>
-                <div class="match-score">
-                    <div class="score-circle">
-                        <span id="matchScore">0</span>%
+            <div class="swipe-container">
+                <div class="swipe-wrapper">
+                    <!-- SAI's Match Card -->
+                    <div class="match-card">
+                        <div class="card-header">
+                            <div class="match-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="match-name">SAI</h3>
+                            <div class="match-score">90% Match</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="match-section">
+                                <h4><i class="fas fa-graduation-cap"></i> Shared Background</h4>
+                                <p>Both graduated from University of Texas at Arlington</p>
+                                <p>Strong foundation in AI and technology</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-handshake"></i> Perfect Match</h4>
+                                <p>SAI needs an AI engineer with LLM/RAG expertise</p>
+                                <p>PAVAN has exactly the skills needed!</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                <p>Building AI agents for the blind</p>
+                                <p>Combining SAI's vision with PAVAN's AI expertise</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="chat-button" onclick="startChat('SAI')">
+                                <i class="fas fa-comments"></i> Start Chat
+                            </button>
+                        </div>
                     </div>
-                    <span class="score-label">Match Score</span>
-                </div>
-            </div>
-            
-            <div class="match-details">
-                <div class="match-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-star"></i> Why You Match
-                    </h4>
-                    <div class="section-content" id="matchExplanation"></div>
-                </div>
-                
-                <div class="match-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-lightbulb"></i> Potential Collaboration
-                    </h4>
-                    <div class="section-content" id="collaborationIdeas"></div>
-                </div>
-                
-                <div class="match-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-comments"></i> Next Steps
-                    </h4>
-                    <div class="section-content">
-                        <ul class="next-steps-list">
-                            <li>
-                                <i class="fas fa-check-circle"></i>
-                                Start a conversation in the chat
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i>
-                                Share your project ideas
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i>
-                                Discuss potential collaboration
-                            </li>
-                        </ul>
+
+                    <!-- Dr. Ava's Match Card -->
+                    <div class="match-card">
+                        <div class="card-header">
+                            <div class="match-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="match-name">Dr. Ava Thompson</h3>
+                            <div class="match-score">85% Match</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="match-section">
+                                <h4><i class="fas fa-graduation-cap"></i> Background</h4>
+                                <p>Looking for an AI/ML engineer to cofound her application</p>
+                                <p>Strong academic background in AI/ML</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-handshake"></i> Skills Match</h4>
+                                <p>Expertise in LLM, LangChain, and Vector DB</p>
+                                <p>Perfect alignment with PAVAN's skills</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                <p>AI/ML application development</p>
+                                <p>Ready to start building innovative solutions</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="chat-button" onclick="startChat('Dr. Ava')">
+                                <i class="fas fa-comments"></i> Start Chat
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Jordan's Match Card -->
+                    <div class="match-card">
+                        <div class="card-header">
+                            <div class="match-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3 class="match-name">Jordan Patel</h3>
+                            <div class="match-score">80% Match</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="match-section">
+                                <h4><i class="fas fa-graduation-cap"></i> Background</h4>
+                                <p>Seeking an AI/ML engineer for his application</p>
+                                <p>Strong interest in AI and innovation</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-handshake"></i> Skills Match</h4>
+                                <p>Interest in GPT-4 and RAG</p>
+                                <p>Matches PAVAN's expertise perfectly</p>
+                            </div>
+                            <div class="match-section">
+                                <h4><i class="fas fa-rocket"></i> Project Potential</h4>
+                                <p>Building innovative AI solutions</p>
+                                <p>Ready to collaborate on exciting projects</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="chat-button" onclick="startChat('Jordan')">
+                                <i class="fas fa-comments"></i> Start Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="swipe-indicators">
+                    <span class="indicator active"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
                 </div>
             </div>
         </div>
@@ -85,29 +142,18 @@
         align-items: center;
         justify-content: center;
         z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: var(--transition-fast);
-    }
-    
-    .modal-overlay.show {
         opacity: 1;
         visibility: visible;
     }
     
     .modal-content {
-        background: var(--surface);
-        border-radius: var(--radius-lg);
+        background: white;
+        border-radius: 8px;
         width: 90%;
         max-width: 600px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: var(--shadow-lg);
-        transform: translateY(20px);
-        transition: var(--transition-fast);
-    }
-    
-    .modal-overlay.show .modal-content {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transform: translateY(0);
     }
     
@@ -148,111 +194,90 @@
     }
     
     .modal-body {
-        padding: var(--spacing-lg);
+        padding: 20px;
     }
     
-    .match-profile {
+    .matches-title {
         text-align: center;
-        margin-bottom: var(--spacing-xl);
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    
+    .match-box {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .match-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
     }
     
     .match-avatar {
-        width: 80px;
-        height: 80px;
-        background-color: var(--primary-light);
+        width: 50px;
+        height: 50px;
+        background: #e3f2fd;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto var(--spacing-md);
     }
     
     .match-avatar i {
-        font-size: 2rem;
-        color: var(--primary);
+        font-size: 24px;
+        color: #1976d2;
+    }
+    
+    .match-info {
+        flex: 1;
     }
     
     .match-name {
-        font-size: 1.5rem;
+        font-size: 18px;
         font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: var(--spacing-md);
+        color: #333;
+        margin: 0;
     }
     
     .match-score {
+        color: #1976d2;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .match-content {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-xs);
+        gap: 10px;
     }
     
-    .score-circle {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        border-radius: 50%;
+    .match-point {
         display: flex;
         align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.25rem;
-        font-weight: 600;
+        gap: 10px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 6px;
     }
     
-    .score-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+    .match-point i {
+        color: #1976d2;
+        font-size: 18px;
     }
     
-    .match-details {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-lg);
-    }
-    
-    .match-section {
-        background-color: var(--background);
-        border-radius: var(--radius-md);
-        padding: var(--spacing-md);
-    }
-    
-    .section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: var(--spacing-sm);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-    }
-    
-    .section-title i {
-        color: var(--primary);
-    }
-    
-    .section-content {
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        line-height: 1.5;
-    }
-    
-    .next-steps-list {
-        list-style: none;
-        padding: 0;
+    .match-point p {
         margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .next-steps-list li {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-    }
-    
-    .next-steps-list i {
-        color: var(--success);
+        color: #666;
+        font-size: 14px;
     }
     
     .modal-footer {
@@ -309,31 +334,385 @@
             justify-content: center;
         }
     }
+    
+    .highlight-box {
+        background-color: var(--primary-light);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .highlight-box i {
+        font-size: 1.5rem;
+        color: var(--primary);
+    }
+
+    .highlight-box span {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .match-point {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .match-point h5 {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .match-point h5 i {
+        color: var(--primary);
+    }
+
+    .project-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .project-list li {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-sm);
+        background-color: var(--background);
+        border-radius: var(--radius-sm);
+    }
+
+    .project-list li i {
+        color: var(--primary);
+        font-size: 1.25rem;
+    }
+
+    .match-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+
+    .match-tab {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid #007bff;
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .match-tab.active {
+        background: #007bff;
+        color: white;
+    }
+
+    .match-tab:hover {
+        background-color: var(--background);
+    }
+
+    .tab-score {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .match-tab.active .tab-score {
+        color: white;
+    }
+
+    .tab-name {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .matches-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .match-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .match-header {
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .match-avatar {
+        width: 60px;
+        height: 60px;
+        background-color: #e3f2fd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+    }
+
+    .match-avatar i {
+        font-size: 24px;
+        color: #1976d2;
+    }
+
+    .match-name {
+        font-size: 1.2em;
+        font-weight: 600;
+        margin: 10px 0;
+        color: #333;
+    }
+
+    .score-circle {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        margin: 10px auto;
+    }
+
+    .match-point {
+        background: #f5f5f5;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .match-point h5 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #1976d2;
+        margin-bottom: 5px;
+    }
+
+    .match-point p {
+        font-size: 0.9em;
+        color: #666;
+        margin: 0;
+    }
+
+    @media (max-width: 1024px) {
+        .matches-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .matches-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .swipe-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .swipe-wrapper {
+        display: flex;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .match-card {
+        min-width: 100%;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .card-header {
+        text-align: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .match-avatar {
+        width: 80px;
+        height: 80px;
+        background: #e3f2fd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+
+    .match-avatar i {
+        font-size: 32px;
+        color: #1976d2;
+    }
+
+    .match-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin: 10px 0;
+    }
+
+    .match-score {
+        font-size: 20px;
+        color: #1976d2;
+        font-weight: 600;
+    }
+
+    .card-content {
+        flex: 1;
+        padding: 20px 0;
+    }
+
+    .match-section {
+        margin-bottom: 20px;
+    }
+
+    .match-section h4 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1976d2;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .match-section p {
+        color: #666;
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+    .card-footer {
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        text-align: center;
+    }
+
+    .chat-button {
+        background: #1976d2;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 auto;
+    }
+
+    .chat-button:hover {
+        background: #1565c0;
+    }
+
+    .swipe-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+    }
+
+    .indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ddd;
+        cursor: pointer;
+    }
+
+    .indicator.active {
+        background: #1976d2;
+    }
 </style>
 
 <script>
-    function showMatchModal(match) {
+    document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('matchModal');
-        const matchName = document.getElementById('matchName');
-        const matchScore = document.getElementById('matchScore');
-        const matchExplanation = document.getElementById('matchExplanation');
-        const collaborationIdeas = document.getElementById('collaborationIdeas');
-        
-        matchName.textContent = match.name;
-        matchScore.textContent = Math.round(match.score * 100);
-        matchExplanation.innerHTML = match.explanation;
-        collaborationIdeas.innerHTML = match.collaboration_ideas;
-        
         modal.classList.add('show');
-    }
+        
+        // Initialize swipe functionality
+        let currentIndex = 0;
+        const wrapper = document.querySelector('.swipe-wrapper');
+        const cards = document.querySelectorAll('.match-card');
+        const indicators = document.querySelectorAll('.indicator');
+        
+        function updateSlide() {
+            wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentIndex);
+            });
+        }
+        
+        // Touch events for swipe
+        let startX = 0;
+        let currentX = 0;
+        
+        wrapper.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        wrapper.addEventListener('touchmove', (e) => {
+            currentX = e.touches[0].clientX;
+            const diff = currentX - startX;
+            wrapper.style.transform = `translateX(calc(-${currentIndex * 100}% + ${diff}px))`;
+        });
+        
+        wrapper.addEventListener('touchend', () => {
+            const diff = currentX - startX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0 && currentIndex > 0) {
+                    currentIndex--;
+                } else if (diff < 0 && currentIndex < cards.length - 1) {
+                    currentIndex++;
+                }
+            }
+            updateSlide();
+        });
+        
+        // Click indicators
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                updateSlide();
+            });
+        });
+    });
     
     function closeMatchModal() {
         const modal = document.getElementById('matchModal');
         modal.classList.remove('show');
     }
     
-    function startChat() {
-        const matchName = document.getElementById('matchName').textContent;
+    function startChat(matchName) {
         const messageInput = document.querySelector('.message-input');
         const sendButton = document.querySelector('.send-button');
         

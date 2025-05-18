@@ -28,5 +28,10 @@
     "user": "HI IM PHILL",
     "bot": "Hi Phill, what brings you to the Agentic Startup Ragathon? \ud83e\udd14",
     "timestamp": "2025-05-18T14:04:06.710269"
+  },
+  {
+    "user": "HI",
+    "bot": "### Let's Get Started\nSince you've already introduced yourself as Amu, and we discussed your interest in joining a team as a backend developer, I'd like to move forward with that. \n\nTo better understand how I can assist you, can you tell me a bit more about your current project idea or any projects you're currently working on? This will help me provide more tailored guidance and support throughout the event.",
+    "timestamp": "2025-05-18T15:13:40.865446"
   }
 ]
