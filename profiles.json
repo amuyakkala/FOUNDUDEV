@@ -1,0 +1,78 @@
+[
+  {
+    "purpose": "building a climate chatbot",
+    "project": "climate chatbot",
+    "looking_for": "Rust backend cofounder",
+    "tech_interest": [
+      "Rust",
+      "chatbot"
+    ],
+    "intent": "cofound",
+    "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
+  },
+  {
+    "purpose": "meet AI founders",
+    "project": "climate or education tech",
+    "looking_for": "AI founders",
+    "tech_interest": [
+      "NLP",
+      "React",
+      "climate",
+      "education"
+    ],
+    "intent": "collaborate",
+    "linkedin": "https://linkedin.com/in/frontend-dev"
+  },
+  {
+    "purpose": "looking for a frontend partner",
+    "project": "LLM-powered backend for chat apps",
+    "looking_for": "frontend partner into React or Tailwind",
+    "tech_interest": [
+      "LLM",
+      "Tailwind",
+      "React"
+    ],
+    "intent": "collaboration",
+    "linkedin": "https://linkedin.com/in/backend-ai"
+  },
+  {
+    "purpose": "team up",
+    "project": "AI-powered education or chat tools",
+    "looking_for": "someone working on",
+    "tech_interest": [
+      "NLP",
+      "React",
+      "product thinking"
+    ],
+    "intent": "team up",
+    "linkedin": "https://linkedin.com/in/designer123"
+  },
+  {
+    "purpose": "TO LEARN",
+    "project": "AI AGENTS",
+    "looking_for": "MENTORS",
+    "tech_interest": "AI, ml, Data",
+    "intent": "explore",
+    "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
+  },
+  {
+    "purpose": "to learn new tech through application",
+    "project": "ai matchmaking agent for hackathons",
+    "looking_for": "coders, builders",
+    "tech_interest": [
+      "AI"
+    ],
+    "intent": "founder",
+    "linkedin": "linkedin.com/suprabhat-tripathi/"
+  },
+  {
+    "purpose": "to know more ABOUT AI",
+    "project": "PLATFORM FOR PROCUREMENT",
+    "looking_for": "TECHNICAL EXPER",
+    "tech_interest": [
+      "AI"
+    ],
+    "intent": "MENTOR",
+    "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
+  }
+]
