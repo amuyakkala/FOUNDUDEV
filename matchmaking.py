@@ -1,19 +1,30 @@
 from typing import List, Dict
 import json
+import groq
+import os
+from dotenv import load_dotenv
+from user_data import UserManager
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Groq client and UserManager
+client = groq.Client(api_key=os.getenv("GROQ_API_KEY"))
+user_manager = UserManager()
 
 # Prompt for generating user summaries
-USER_SUMMARY_PROMPT = """Based on the following conversation history, create a comprehensive summary of the user's:
-1. Technical skills and experience
+USER_SUMMARY_PROMPT = """Based on the following conversation history, create a comprehensive summary of the user's profile. Focus on:
+
+1. Technical skills and expertise
 2. Project interests and goals
 3. Communication style and personality
-4. Preferred working style
+4. Working style and preferences
 5. Areas where they could use complementary skills
 
-Format the summary in a clear, structured way that highlights key attributes that would be relevant for team matching.
+Format your response in clear, structured markdown that highlights key attributes relevant for team matching.
 
 Conversation History:
-{conversation_history}
-"""
+{conversation_history}"""
 
 # Prompt for finding the best match
 MATCHING_PROMPT = """You are an expert at matching hackathon participants based on their profiles. Your goal is to find the perfect match that would lead to the most successful and enjoyable hackathon experience.
@@ -31,142 +42,220 @@ Please analyze these profiles and find the best match for the current user. Cons
 4. Potential for successful collaboration
 5. Overall team dynamic
 
-Output your match recommendation in the following format:
-## Match Recommendation
-**Best Match:** [Name]
+Format your response in markdown with the following sections:
+## Best Match
+[Name of the best match]
 
-### Why This Match Works
-[Detailed explanation of why this is the perfect match, highlighting complementary skills and potential for success]
+## Match Score
+[Score between 0 and 1]
 
-### Team Strengths
-- [Key strength 1]
-- [Key strength 2]
-- [Key strength 3]
+## Why This Match Works
+[Detailed explanation of why this is a good match]
 
-### Potential Project Directions
-- [Project idea 1]
-- [Project idea 2]
-"""
+## Shared Interests & Skills
+[List of shared interests and complementary skills]
+
+## Potential Collaboration Areas
+[Specific project ideas or areas where they could collaborate]
+
+## Next Steps
+[Suggested next steps for the matched users]"""
 
 def generate_user_summary(conversation_history: List[Dict]) -> str:
     """Generate a summary of a user based on their conversation history."""
-    # Format conversation history for the prompt
-    formatted_history = "\n".join([
-        f"{msg['role']}: {msg['content']}"
-        for msg in conversation_history
-    ])
+    if not conversation_history:
+        print("Warning: Empty conversation history")
+        return "No conversation history available."
     
-    # TODO: Call LLM with USER_SUMMARY_PROMPT
-    # For now, return a placeholder
-    return "User summary placeholder"
+    # Format conversation history for the prompt
+    formatted_history = []
+    for msg in conversation_history:
+        if not isinstance(msg, dict) or 'user' not in msg or 'bot' not in msg:
+            print(f"Warning: Invalid message format: {msg}")
+            continue
+            
+        user_msg = msg['user'].strip()
+        bot_msg = msg['bot'].strip()
+        if user_msg and bot_msg:  # Only include non-empty messages
+            formatted_history.append(f"User: {user_msg}")
+            formatted_history.append(f"Assistant: {bot_msg}")
+    
+    if not formatted_history:
+        print("Warning: No valid messages in conversation history")
+        return "No valid messages in conversation history."
+    
+    conversation_text = "\n".join(formatted_history)
+    print("\n=== Formatted Conversation History ===")
+    print(conversation_text)
+    print("=====================================\n")
+    
+    try:
+        # Create messages with system instruction
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert at analyzing conversations and creating comprehensive user profiles. Format your response in clear, structured markdown."
+            },
+            {
+                "role": "user",
+                "content": USER_SUMMARY_PROMPT.format(conversation_history=conversation_text)
+            }
+        ]
+        
+        print("\n=== User Summary Request ===")
+        print("System Message:", messages[0]["content"])
+        print("\nUser Message:", messages[1]["content"])
+        print("===========================\n")
+        
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000
+        )
+        
+        # Get the response content
+        content = response.choices[0].message.content.strip()
+        print("\n=== User Summary Response ===")
+        print(content)
+        print("===========================\n")
+        
+        return content
+    except Exception as e:
+        error_msg = str(e)
+        if "rate_limit_exceeded" in error_msg:
+            print(f"Rate limit exceeded: {error_msg}")
+            return "Rate limit exceeded. Please try again in about an hour."
+        print(f"Error generating user summary: {e}")
+        return "Error generating user summary."
 
 def find_best_match(current_user: str, eligible_users: Dict) -> Dict:
     """Find the best match for a user among all available users."""
-    # Generate summaries for all other users
-    available_matches = []
-    for name, data in eligible_users.items():
-        chat_history = data.get('chat_history', [])
+    try:
+        print(f"\n=== Finding match for {current_user} ===")
+        # Get current user's chat history from the user manager
+        current_user_history = user_manager.get_chat_history(current_user)
+        print(f"Current user history length: {len(current_user_history)} messages")
         
-        # Extract key information from chat history
-        interests = []
-        skills = []
-        goals = []
-        project_ideas = []
+        current_user_summary = generate_user_summary(current_user_history)
+        if "Rate limit exceeded" in current_user_summary:
+            return {
+                "match": None,
+                "explanation": "We've reached our daily limit for AI processing. Please try again in about an hour.",
+                "score": 0
+            }
+        print("\nCurrent user summary:", current_user_summary)
         
-        for msg in chat_history:
-            content = msg.get('user', '').lower()
-            bot_content = msg.get('bot', '').lower()
-            
-            # Extract interests
-            if 'interested in' in content:
-                interests.append(content.split('interested in')[1].strip())
-            if 'project' in content and 'working on' in content:
-                project_ideas.append(content.split('working on')[1].strip())
-            
-            # Extract skills
-            skill_keywords = ['ai', 'machine learning', 'chatbot', 'python', 'javascript', 'react', 'node', 'backend', 'frontend']
-            for skill in skill_keywords:
-                if skill in content or skill in bot_content:
-                    skills.append(skill.title())
-            
-            # Extract goals
-            goal_keywords = ['team', 'collaborate', 'build', 'create', 'develop', 'learn', 'mentor']
-            for goal in goal_keywords:
-                if goal in content or goal in bot_content:
-                    goals.append(goal.title())
+        # Generate summaries for all other users
+        available_matches = []
+        for name, data in eligible_users.items():
+            if name == current_user:
+                continue
+                
+            chat_history = data.get('chat_history', [])
+            if not chat_history:
+                continue
+                
+            print(f"\nGenerating summary for {name}")
+            user_summary = generate_user_summary(chat_history)
+            if "Rate limit exceeded" in user_summary:
+                return {
+                    "match": None,
+                    "explanation": "We've reached our daily limit for AI processing. Please try again in about an hour.",
+                    "score": 0
+                }
+            available_matches.append({
+                "name": name,
+                "summary": user_summary
+            })
         
-        # Calculate match score based on various factors
-        match_score = 0
-        match_factors = []
+        if not available_matches:
+            print("No available matches found")
+            return {
+                "match": None,
+                "explanation": "No suitable matches found at this time. Keep chatting to find potential matches!",
+                "score": 0
+            }
         
-        # Score based on shared interests
-        if interests:
-            match_score += 2
-            match_factors.append(f"Shared interests in: {', '.join(interests[:2])}")
+        # Format available matches for the prompt
+        formatted_matches = "\n".join([
+            f"User: {match['name']}\nProfile: {match['summary']}"
+            for match in available_matches
+        ])
         
-        # Score based on complementary skills
-        if len(skills) >= 2:
-            match_score += 2
-            match_factors.append(f"Technical skills: {', '.join(skills[:3])}")
+        # Create messages with system instruction
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert at matching hackathon participants. Format your response in clear, structured markdown."
+            },
+            {
+                "role": "user",
+                "content": MATCHING_PROMPT.format(
+                    current_user_summary=current_user_summary,
+                    available_matches=formatted_matches
+                )
+            }
+        ]
         
-        # Score based on project alignment
-        if project_ideas:
-            match_score += 1
-            match_factors.append(f"Project focus: {project_ideas[0]}")
+        print("\n=== Match Request ===")
+        print("System Message:", messages[0]["content"])
+        print("\nUser Message:", messages[1]["content"])
+        print("====================\n")
         
-        # Score based on goals
-        if goals:
-            match_score += 1
-            match_factors.append(f"Goals: {', '.join(goals[:2])}")
+        # Get match recommendation from Groq
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000
+        )
         
-        available_matches.append({
-            'name': name,
-            'score': match_score,
-            'factors': match_factors,
-            'interests': list(set(interests)),
-            'skills': list(set(skills)),
-            'goals': list(set(goals)),
-            'project_ideas': list(set(project_ideas))
-        })
-    
-    # Sort matches by score
-    available_matches.sort(key=lambda x: x['score'], reverse=True)
-    
-    # Return the best match with detailed explanation
-    if available_matches:
-        match = available_matches[0]
+        # Get the response content
+        content = response.choices[0].message.content.strip()
+        print("\n=== Match Response ===")
+        print(content)
+        print("====================\n")
         
-        # Build detailed explanation
-        explanation = f"""## Match Found! 🤝
-
-I've found a great potential match with **{match['name']}**!
-
-### Why This Match Works
-{chr(10).join([f"- {factor}" for factor in match['factors']])}
-
-### Shared Interests & Skills
-- **Technical Focus**: {', '.join(match['skills'][:3]) if match['skills'] else 'Various technical skills'}
-- **Project Goals**: {', '.join(match['project_ideas'][:2]) if match['project_ideas'] else 'Building innovative solutions'}
-- **Collaboration Style**: {', '.join(match['goals'][:2]) if match['goals'] else 'Team-oriented approach'}
-
-### Potential Collaboration Areas
-1. **Project Development**: Combine your expertise to build something amazing
-2. **Skill Sharing**: Learn from each other's strengths
-3. **Innovation**: Create unique solutions using your combined knowledge
-
-### Next Steps
-1. Reach out to {match['name']} to discuss your shared interests
-2. Explore potential project ideas together
-3. Start planning your collaboration!"""
+        # Extract match name and score from markdown
+        match_name = None
+        match_score = 0.0
+        
+        # Look for match name in the response
+        match_section = content.split("## Best Match")[1].split("##")[0] if "## Best Match" in content else ""
+        if match_section:
+            match_name = match_section.strip()
+        
+        # Look for match score in the response
+        score_section = content.split("## Match Score")[1].split("##")[0] if "## Match Score" in content else ""
+        if score_section:
+            try:
+                score_text = score_section.strip()
+                # Extract first number between 0 and 1
+                import re
+                score_match = re.search(r'0\.\d+', score_text)
+                if score_match:
+                    match_score = float(score_match.group())
+            except:
+                pass
         
         return {
-            'match': match['name'],
-            'explanation': explanation,
-            'score': match['score']
+            "match": match_name,
+            "explanation": content,  # Return the full markdown response
+            "score": match_score
         }
-    else:
+    except Exception as e:
+        error_msg = str(e)
+        if "rate_limit_exceeded" in error_msg:
+            print(f"Rate limit exceeded: {error_msg}")
+            return {
+                "match": None,
+                "explanation": "We've reached our daily limit for AI processing. Please try again in about an hour.",
+                "score": 0
+            }
+        print(f"Error finding best match: {e}")
         return {
-            'match': None,
-            'explanation': "No suitable matches found at this time. Keep chatting to find potential matches!",
-            'score': 0
+            "match": None,
+            "explanation": "An error occurred while finding matches. Please try again.",
+            "score": 0
         } 

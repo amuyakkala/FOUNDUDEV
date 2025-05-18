@@ -166,47 +166,50 @@
     </div>
     
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function handleLogin(event) {
+            event.preventDefault();
             
-            const username = document.getElementById('username').value.trim();
-            const loginButton = document.getElementById('loginButton');
-            const errorMessage = document.getElementById('errorMessage');
+            const nameInput = document.getElementById('username');
+            const name = nameInput.value.trim();
             
-            if (!username) {
-                errorMessage.textContent = 'Please enter a username';
-                errorMessage.classList.add('show');
+            if (!name) {
+                showError('Please enter your name');
                 return;
             }
-            
-            loginButton.disabled = true;
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
             
             try {
                 const response = await fetch('/login', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username })
+                    body: JSON.stringify({ name })
                 });
                 
                 const data = await response.json();
-                
-                if (response.ok) {
-                    window.location.href = '/';
-                } else {
-                    errorMessage.textContent = data.error || 'Failed to join chat';
-                    errorMessage.classList.add('show');
+                if (data.error) {
+                    showError(data.error);
+                    return;
                 }
+                
+                // Store user name in localStorage
+                localStorage.setItem('user_name', name);
+                
+                // Redirect to home page
+                window.location.href = '/';
             } catch (error) {
-                errorMessage.textContent = 'Network error. Please try again.';
-                errorMessage.classList.add('show');
-            } finally {
-                loginButton.disabled = false;
-                loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Join Chat';
+                showError('An error occurred. Please try again.');
             }
-        });
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Add event listener to form
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
     </script>
 </body>
 </html> 

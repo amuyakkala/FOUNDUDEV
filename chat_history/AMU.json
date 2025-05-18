@@ -1,0 +1,32 @@
+[
+  {
+    "user": "I'm AMU",
+    "bot": "Great to meet you! I'm Synthia, your AI guide for the AGENTIC STARTUP RAGATHON. I'd love to learn more about your background and what brings you here today.",
+    "timestamp": "2025-05-18T13:59:36.805777"
+  },
+  {
+    "user": "HI IM AMU",
+    "bot": "Hi Amu, welcome to the Agentic Startup Ragathon \ud83c\udf1f. What brings you here today?",
+    "timestamp": "2025-05-18T13:59:42.545672"
+  },
+  {
+    "user": "IM LOOKING FOR JOIN ATEAM",
+    "bot": "We have a team matching area where you can meet others looking to form or join a team. Would you like me to show you where it is?",
+    "timestamp": "2025-05-18T13:59:53.112478"
+  },
+  {
+    "user": "YES",
+    "bot": "Head over to the networking lounge, and look for the \"Team Up\" board. You can post your skills or find a team that needs someone with your expertise \ud83d\udce3. I can also introduce you to some team leads if you'd like.",
+    "timestamp": "2025-05-18T13:59:59.533477"
+  },
+  {
+    "user": "IM BACKEND DEVELOPER",
+    "bot": "There are a few teams looking for backend developers. Let me check the board real quick... Ah, yes! Team \"Eclipse\" and Team \"Pulse\" are both looking for someone with your skills. Would you like to meet them?",
+    "timestamp": "2025-05-18T14:00:10.027008"
+  },
+  {
+    "user": "HI IM PHILL",
+    "bot": "Hi Phill, what brings you to the Agentic Startup Ragathon? \ud83e\udd14",
+    "timestamp": "2025-05-18T14:04:06.710269"
+  }
+]

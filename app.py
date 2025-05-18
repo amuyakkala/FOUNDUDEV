@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from user_data import UserManager
 from matchmaking import find_best_match
 import json
@@ -9,6 +9,14 @@ import logging
 import groq
 import os
 from dotenv import load_dotenv
+from system_prompt import SYSTEM_PROMPT
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -24,12 +32,47 @@ client = groq.Client(api_key=GROQ_API_KEY)
 def get_ai_response(messages):
     """Get response from Groq API."""
     try:
+        # Format the system prompt for the chat
+        system_content = f"""You are {SYSTEM_PROMPT['systemInstruction']['name']}, with the following personality traits:
+{', '.join(SYSTEM_PROMPT['systemInstruction']['personality']['traits'])}
+
+Your tone should be:
+{', '.join(SYSTEM_PROMPT['systemInstruction']['personality']['tone'])}
+
+Your objectives are:
+{', '.join(SYSTEM_PROMPT['systemInstruction']['objectives'])}
+
+You need to gather this information:
+{', '.join(SYSTEM_PROMPT['systemInstruction']['requiredInfo'])}
+
+Keep responses concise and focused. After getting the name, ask about their purpose for attending. Don't repeat information already shared. All responses should be formatted in Markdown, using appropriate formatting for headings, lists, emphasis, and code blocks.
+
+Event Details:
+- Name: {SYSTEM_PROMPT['eventDetails']['name']}
+- Dates: {SYSTEM_PROMPT['eventDetails']['dates']}
+- Motto: {SYSTEM_PROMPT['eventDetails']['motto']}
+- Tagline: {SYSTEM_PROMPT['eventDetails']['tagline']}
+- Core Purpose: {SYSTEM_PROMPT['eventDetails']['corePurpose']}"""
+
+        # Create a new messages array with the system message first
+        formatted_messages = [
+            {"role": "system", "content": system_content}
+        ]
+
+        # Add the rest of the messages
+        for msg in messages:
+            if isinstance(msg, dict) and 'role' in msg and 'content' in msg:
+                formatted_messages.append({
+                    "role": msg['role'],
+                    "content": str(msg['content'])
+                })
+
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            temperature=1.0,
-            top_p=0.95,
-            max_tokens=32768
+            model=SYSTEM_PROMPT['runSettings']['model'],
+            messages=formatted_messages,
+            temperature=SYSTEM_PROMPT['runSettings']['temperature'],
+            top_p=SYSTEM_PROMPT['runSettings']['topP'],
+            max_tokens=SYSTEM_PROMPT['runSettings']['maxOutputTokens']
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -37,50 +80,16 @@ def get_ai_response(messages):
         return None
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'  # Required for session management
 user_manager = UserManager()
-
-# Initialize conversation history with a proper system prompt
-messages = [
-    {
-        "role": "system",
-        "content": """You are Synthia, a friendly and concise AI guide for the AGENTIC STARTUP RAGATHON. Keep your responses short, engaging, and to the point.
-
-Key Points:
-- Be brief and conversational
-- Use emojis sparingly but effectively
-- Keep responses under 3-4 sentences when possible
-- Focus on one topic at a time
-- Use simple, clear language
-- Avoid unnecessary formatting or markdown unless specifically needed
-
-Your main goals:
-1. Help users connect with others
-2. Guide them through the event
-3. Answer questions directly
-4. Keep the conversation flowing naturally
-
-Remember: Less is more. Users prefer quick, helpful responses over lengthy explanations."""
-    }
-]
 
 @app.route('/')
 def home():
     """Render the home page with active users."""
     try:
-        # Check if user is logged in
-        if 'user_name' not in session:
-            return redirect(url_for('login'))
-            
         users = user_manager.get_active_users(minutes=30)
         
         # Create the initial welcome message with Markdown
-        welcome_message = """👋 **Welcome to the AGENTIC STARTUP RAGATHON!** I'm Synthia, your AI guide for this exciting event. 
-
-### Let's Get Started
-I'm here to help you make the most of this experience and connect with amazing people. 
-
-**What's your name?** I'd love to get to know you better! 🚀"""
+        welcome_message = SYSTEM_PROMPT['systemInstruction']['openingLine']
         
         # Convert Markdown to HTML
         welcome_html = markdown.markdown(
@@ -109,7 +118,7 @@ def get_users():
     """Get list of all users and available matches count."""
     try:
         users = user_manager.get_all_users()
-        current_user = session.get('user_name')
+        current_user = request.args.get('user_name')
         
         # Convert list of users to dictionary for easier processing
         users_dict = {user['name']: user for user in users}
@@ -150,7 +159,6 @@ def login():
             
         # Create or get user
         user = user_manager.create_user(name)
-        session['user_name'] = name
         
         # Get user's chat history
         chat_history = user_manager.get_chat_history(name)
@@ -181,25 +189,35 @@ def login():
 def chat():
     """Handle chat messages."""
     try:
-        if 'user_name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
+        user_name = request.json.get('user_name')
+        if not user_name:
+            return jsonify({"error": "User name is required"}), 400
             
-        user_name = session['user_name']
         user_message = request.json.get('message', '')
         
         if not user_message.strip():
             return jsonify({"error": "Message cannot be empty"}), 400
         
-        # Add user message to history
+        # Initialize messages with system prompt
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT}
+        ]
+        
+        # Get chat history and add to messages
+        chat_history = user_manager.get_chat_history(user_name)
+        if chat_history:
+            for msg in chat_history:
+                if isinstance(msg, dict) and 'user' in msg and 'bot' in msg:
+                    messages.append({"role": "user", "content": msg['user']})
+                    messages.append({"role": "assistant", "content": msg['bot']})
+        
+        # Add current user message
         messages.append({"role": "user", "content": user_message})
         
         # Get AI response
         ai_response = get_ai_response(messages)
         if not ai_response:
-            ai_response = "I apologize, but I'm having trouble processing your request. Could you please try again?"
-        
-        # Add AI response to history
-        messages.append({"role": "assistant", "content": ai_response})
+            return jsonify({"error": "Failed to get AI response"}), 500
         
         # Convert Markdown to HTML
         html_response = markdown.markdown(
@@ -213,7 +231,7 @@ def chat():
             ]
         )
         
-        # Save chat history with both raw Markdown and HTML versions
+        # Save chat history
         user_manager.add_chat_history(user_name, user_message, ai_response)
         
         return jsonify({
@@ -224,16 +242,16 @@ def chat():
         })
     except Exception as e:
         logger.error(f"Error in chat route: {str(e)}")
-        return jsonify({"error": "Failed to process message"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/match', methods=['POST'])
 def find_match():
     """Handle matchmaking request."""
     try:
-        if 'user_name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
+        user_name = request.json.get('user_name')
+        if not user_name:
+            return jsonify({"error": "User name is required"}), 400
             
-        user_name = session['user_name']
         logger.info(f"Finding match for user: {user_name}")
         
         user = user_manager.get_user(user_name)
@@ -254,6 +272,10 @@ def find_match():
         
         # Convert list of users to dictionary for easier processing
         users_dict = {user['name']: user for user in all_users}
+        
+        # Add chat history to each user's data
+        for name in users_dict:
+            users_dict[name]['chat_history'] = user_manager.get_chat_history(name)
         
         # Filter users who have enough conversation history
         eligible_users = {

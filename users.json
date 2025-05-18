@@ -1,1 +1,50 @@
-{}
+{
+  "AMU": {
+    "name": "AMU",
+    "conversation_count": 6,
+    "last_active": "2025-05-18T14:04:06.710284",
+    "created_at": "2025-05-18T13:59:36.804999"
+  },
+  "PHIL": {
+    "name": "PHIL",
+    "conversation_count": 3,
+    "last_active": "2025-05-18T14:04:29.772383",
+    "created_at": "2025-05-18T14:04:19.110946"
+  },
+  "im vicky": {
+    "name": "im vicky",
+    "conversation_count": 1,
+    "last_active": "2025-05-18T14:06:36.632153",
+    "created_at": "2025-05-18T14:06:36.631640"
+  },
+  "Harrison": {
+    "name": "Harrison",
+    "conversation_count": 8,
+    "last_active": "2025-05-18T14:37:53.803909",
+    "created_at": "2025-05-18T14:08:35.877756"
+  },
+  "Vince": {
+    "name": "Vince",
+    "conversation_count": 6,
+    "last_active": "2025-05-18T14:17:49.917159",
+    "created_at": "2025-05-18T14:14:58.025668"
+  },
+  "riya": {
+    "name": "riya",
+    "conversation_count": 6,
+    "last_active": "2025-05-18T14:41:02.224777",
+    "created_at": "2025-05-18T14:40:16.362823"
+  },
+  "Kyle": {
+    "name": "Kyle",
+    "conversation_count": 5,
+    "last_active": "2025-05-18T14:42:37.511719",
+    "created_at": "2025-05-18T14:41:37.829358"
+  },
+  "Julie": {
+    "name": "Julie",
+    "conversation_count": 5,
+    "last_active": "2025-05-18T14:44:01.284574",
+    "created_at": "2025-05-18T14:42:44.138200"
+  }
+}

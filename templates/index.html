@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -31,7 +33,13 @@
                 <button class="match-button" id="matchButton" disabled>
                     <i class="fas fa-users"></i> Find Match
                 </button>
-        </div>
+            </div>
+
+            <div class="logout-section">
+                <button class="logout-button" id="logoutButton">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
         </aside>
         
         <!-- Chat Area -->
@@ -89,9 +97,287 @@
         </div>
     </div>
 
+    <style>
+        /* Add these styles to your existing CSS */
+        .matchmaking-section {
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+        }
+
+        .matchmaking-title {
+            font-size: 1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .matchmaking-progress {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .logout-section {
+            margin-top: 0;
+            padding: var(--spacing-sm);
+            border-top: 1px solid var(--border);
+        }
+
+        .logout-button {
+            width: 100%;
+            padding: var(--spacing-sm);
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logout-button:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .logout-button i {
+            font-size: 1.1rem;
+        }
+    </style>
+
     <script>
+        let currentUser = localStorage.getItem('user_name');
+        
+        // If no user is stored, redirect to login
+        if (!currentUser) {
+            window.location.href = '/login';
+        }
+
+        // Initialize chat interface
+        function initializeChat() {
+            // Enable chat input
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            
+            // Get initial users list
+            getUsers();
+            
+            // Load chat history
+            loadChatHistory();
+        }
+
+        // Function to load chat history
+        async function loadChatHistory() {
+            try {
+                const response = await fetch(`/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: currentUser
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load chat history');
+                }
+                
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Clear existing messages except welcome message
+                const welcomeMessage = chatMessages.querySelector('.message.bot');
+                chatMessages.innerHTML = '';
+                if (welcomeMessage) {
+                    chatMessages.appendChild(welcomeMessage);
+                }
+                
+                // Add chat history messages
+                if (data.chat_history) {
+                    data.chat_history.forEach(msg => {
+                        if (msg.user) {
+                            addMessage(msg.user, true);
+                        }
+                        if (msg.bot) {
+                            // Convert Markdown to HTML for bot messages
+                            const htmlResponse = marked.parse(msg.bot);
+                            addMessage(htmlResponse);
+                        }
+                    });
+                }
+                
+                // Update message count and match button
+                messageCount = data.chat_history ? data.chat_history.length : 0;
+                updateMatchButton();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast(error.message || 'Failed to load chat history', 'error');
+            }
+        }
+
+        // Function to send chat message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            try {
+                // Add user message immediately
+                addMessage(message, true);
+                messageInput.value = '';
+
+                // Show loading state
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'message bot';
+                loadingDiv.innerHTML = '<div class="loading"></div>';
+                chatMessages.appendChild(loadingDiv);
+                
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_name: currentUser
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+                
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Remove loading state
+                loadingDiv.remove();
+                
+                // Add AI response
+                const htmlResponse = marked.parse(data.response.text);
+                addMessage(htmlResponse);
+                
+                // Update message count and match button
+                messageCount++;
+                updateMatchButton();
+                
+                // Update users list
+                getUsers();
+            } catch (error) {
+                console.error('Error:', error);
+                showToast(error.message || 'Failed to send message', 'error');
+                // Remove loading state if it exists
+                const loadingDiv = document.querySelector('.message.bot .loading');
+                if (loadingDiv) {
+                    loadingDiv.parentElement.parentElement.remove();
+                }
+            }
+        }
+
+        // Function to get users
+        async function getUsers() {
+            try {
+                const response = await fetch(`/users?user_name=${currentUser}`);
+                const data = await response.json();
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    return;
+                }
+                
+                // Update users list
+                updateUserList(data.users);
+                updateAvailableMatches(data.available_matches);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Function to trigger confetti
+        function triggerConfetti() {
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { 
+                startVelocity: 30, 
+                spread: 360, 
+                ticks: 60, 
+                zIndex: 9999,
+                colors: ['#FFD700', '#FF69B4', '#87CEEB', '#98FB98', '#DDA0DD']
+            };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Fire from both sides
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                });
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                });
+            }, 250);
+        }
+
+        // Function to find match
+        async function findMatch() {
+            try {
+                matchButton.disabled = true;
+                matchButton.innerHTML = '<div class="loading"></div>';
+                
+                const response = await fetch('/match', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_name: currentUser
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                // Show match modal
+                matchContent.innerHTML = data.html_explanation;
+                matchModal.style.display = 'flex';
+                
+                // Add a small delay before triggering confetti
+                setTimeout(() => {
+                    triggerConfetti();
+                }, 100);
+                
+                showToast('Match found! 🎉');
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Failed to find match', 'error');
+            } finally {
+                matchButton.disabled = false;
+                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
+            }
+        }
+
         // State management
-        let currentUser = null;
         let messageCount = 0;
         
         // DOM Elements
@@ -108,33 +394,6 @@
         const matchModal = document.getElementById('matchModal');
         const matchContent = document.getElementById('matchContent');
         const closeModal = document.getElementById('closeModal');
-        
-        // Check if user is logged in
-        async function checkLoginStatus() {
-            try {
-                const response = await fetch('/users');
-                if (!response.ok) {
-                    window.location.href = '/login';
-                    return;
-                }
-
-                const data = await response.json();
-                if (!data.users) {
-                    window.location.href = '/login';
-                    return;
-                }
-                
-                // Enable chat
-                messageInput.disabled = false;
-                sendButton.disabled = false;
-                
-                // Update UI
-                updateUserList(data.users);
-                updateMatchButton();
-            } catch (error) {
-                window.location.href = '/login';
-            }
-        }
         
         // Utility Functions
         function showToast(message, type = 'success') {
@@ -153,6 +412,15 @@
             progressFill.style.width = `${Math.min(progress, 100)}%`;
             progressText.textContent = `${messageCount}/3 messages needed`;
             matchButton.disabled = messageCount < 3;
+        }
+        
+        function updateAvailableMatches(count) {
+            const matchButton = document.getElementById('matchButton');
+            if (count > 0) {
+                matchButton.innerHTML = `<i class="fas fa-users"></i> Find Match (${count} available)`;
+            } else {
+                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
+            }
         }
         
         function updateUserList(users) {
@@ -183,99 +451,28 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
-        // Event Handlers
-        async function handleSendMessage() {
-            const message = messageInput.value.trim();
-            if (!message) return;
-
-            try {
-                // Add user message
-            addMessage(message, true);
-            messageInput.value = '';
-
-                // Show loading state
-                const loadingDiv = document.createElement('div');
-                loadingDiv.className = 'message bot';
-                loadingDiv.innerHTML = '<div class="loading"></div>';
-                chatMessages.appendChild(loadingDiv);
-                
-                // Send to server
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message })
-                });
-                
-                if (!response.ok) throw new Error('Failed to send message');
-
-                const data = await response.json();
-                
-                // Remove loading state
-                loadingDiv.remove();
-                
-                // Add bot response
-                addMessage(data.response.html_response);
-                
-                // Update message count and match button
-                messageCount++;
-                updateMatchButton();
-                
-                // Update user list
-                const usersResponse = await fetch('/users');
-                const usersData = await usersResponse.json();
-                updateUserList(usersData.users);
-            } catch (error) {
-                showToast(error.message, 'error');
-            }
-        }
-        
-        async function handleMatchmaking() {
-            try {
-                matchButton.disabled = true;
-                matchButton.innerHTML = '<div class="loading"></div>';
-                
-                const response = await fetch('/match', {
-                    method: 'POST'
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Matchmaking failed');
-                }
-                
-                const data = await response.json();
-                
-                // Show match result in modal
-                matchContent.innerHTML = data.html_explanation;
-                matchModal.style.display = 'flex';
-                
-                showToast('Match found! 🎉');
-            } catch (error) {
-                showToast(error.message, 'error');
-            } finally {
-                matchButton.disabled = false;
-                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
-            }
-        }
-        
         // Event Listeners
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSendMessage();
+                sendMessage();
             }
         });
         
-        sendButton.addEventListener('click', handleSendMessage);
-        matchButton.addEventListener('click', handleMatchmaking);
+        sendButton.addEventListener('click', sendMessage);
+        matchButton.addEventListener('click', findMatch);
         menuButton.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
         
         closeModal.addEventListener('click', () => {
             matchModal.style.display = 'none';
+            // Trigger a small burst of confetti when closing
+            confetti({
+                particleCount: 30,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         });
         
         // Auto-resize textarea
@@ -284,8 +481,20 @@
             this.style.height = (this.scrollHeight) + 'px';
         });
         
-        // Check login status on page load
-        checkLoginStatus();
+        // Add logout functionality
+        function handleLogout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('user_name');
+            
+            // Redirect to login page
+            window.location.href = '/login';
+        }
+
+        // Add logout button event listener
+        document.getElementById('logoutButton').addEventListener('click', handleLogout);
+        
+        // Initialize chat interface on page load
+        initializeChat();
     </script>
 </body>
 </html> 
