@@ -1,78 +1,318 @@
 [
   {
-    "purpose": "building a climate chatbot",
-    "project": "climate chatbot",
-    "looking_for": "Rust backend cofounder",
-    "tech_interest": [
-      "Rust",
-      "chatbot"
+    "name": "Dr. Ava Thompson",
+    "purpose": [
+      "Find a cofounder"
     ],
-    "intent": "cofound",
-    "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
-  },
-  {
-    "purpose": "meet AI founders",
-    "project": "climate or education tech",
-    "looking_for": "AI founders",
-    "tech_interest": [
-      "NLP",
-      "React",
-      "climate",
-      "education"
+    "project": [
+      "AI/ML application"
     ],
-    "intent": "collaborate",
-    "linkedin": "https://linkedin.com/in/frontend-dev"
-  },
-  {
-    "purpose": "looking for a frontend partner",
-    "project": "LLM-powered backend for chat apps",
-    "looking_for": "frontend partner into React or Tailwind",
+    "looking_for": [
+      "AI/ML engineer",
+      "Full-stack developer"
+    ],
     "tech_interest": [
+      "AGI",
       "LLM",
-      "Tailwind",
+      "LangChain",
+      "Vector DB",
+      "GraphQL"
+    ],
+    "intent": [
+      "cofound"
+    ],
+    "linkedin": "https://linkedin.com/in/ava-thompson"
+  },
+  {
+    "name": "Marcus Lee",
+    "purpose": [
+      "Explore opportunities"
+    ],
+    "project": [
+      "Web application"
+    ],
+    "looking_for": [
+      "AI/ML engineer",
+      "Full-stack developer"
+    ],
+    "tech_interest": [
+      "Python",
+      "FastAPI",
+      "NLP",
+      "LLM",
+      "Finance"
+    ],
+    "intent": [
+      "explore"
+    ],
+    "linkedin": "https://linkedin.com/in/marcus-lee"
+  },
+  {
+    "name": "Priya Kaur",
+    "purpose": [
+      "Network with developers"
+    ],
+    "project": [
+      "IoT project"
+    ],
+    "looking_for": [
+      "AI/ML engineer",
+      "DevOps engineer"
+    ],
+    "tech_interest": [
+      "IoT",
+      "TensorFlow",
+      "Climate AI",
+      "Edge AI"
+    ],
+    "intent": [
+      "team up"
+    ],
+    "linkedin": "https://linkedin.com/in/priya-kaur"
+  },
+  {
+    "name": "Samuel Ortiz",
+    "purpose": [
+      "Find a mentor"
+    ],
+    "project": [
+      "Open source project"
+    ],
+    "looking_for": [
+      "Mentor"
+    ],
+    "tech_interest": [
+      "Vision Transformers",
+      "LLMs",
+      "Edge ML",
+      "Advising"
+    ],
+    "intent": [
+      "mentor"
+    ],
+    "linkedin": "https://linkedin.com/in/samuel-ortiz"
+  },
+  {
+    "name": "Lina Chen",
+    "purpose": [
+      "Learn new technologies"
+    ],
+    "project": [
+      "Exploring ideas"
+    ],
+    "looking_for": [
+      "Mentor"
+    ],
+    "tech_interest": [
+      "AI",
+      "ML",
+      "Hackathons",
+      "Learning"
+    ],
+    "intent": [
+      "learn"
+    ],
+    "linkedin": "https://linkedin.com/in/lina-chen"
+  },
+  {
+    "name": "Jordan Patel",
+    "purpose": [
+      "Find a cofounder"
+    ],
+    "project": [
+      "AI/ML application"
+    ],
+    "looking_for": [
+      "AI/ML engineer",
+      "Full-stack developer"
+    ],
+    "tech_interest": [
+      "GPT-4",
+      "RAG",
+      "Education",
+      "Firebase",
       "React"
     ],
-    "intent": "collaboration",
-    "linkedin": "https://linkedin.com/in/backend-ai"
-  },
-  {
-    "purpose": "team up",
-    "project": "AI-powered education or chat tools",
-    "looking_for": "someone working on",
-    "tech_interest": [
-      "NLP",
-      "React",
-      "product thinking"
+    "intent": [
+      "cofound"
     ],
-    "intent": "team up",
-    "linkedin": "https://linkedin.com/in/designer123"
+    "linkedin": "https://linkedin.com/in/jordan-patel"
   },
   {
-    "purpose": "TO LEARN",
-    "project": "AI AGENTS",
-    "looking_for": "MENTORS",
-    "tech_interest": "AI, ml, Data",
-    "intent": "explore",
+    "name": "Elena Rossi",
+    "purpose": [
+      "Network with developers"
+    ],
+    "project": [
+      "Data platform"
+    ],
+    "looking_for": [
+      "Backend developer"
+    ],
+    "tech_interest": [
+      "LLM",
+      "ESG",
+      "Rust",
+      "Data Viz",
+      "Sustainability"
+    ],
+    "intent": [
+      "collaborate"
+    ],
+    "linkedin": "https://linkedin.com/in/elena-rossi"
+  },
+  {
+    "name": "Noah Williams",
+    "purpose": [
+      "Explore opportunities"
+    ],
+    "project": [
+      "Web application"
+    ],
+    "looking_for": [
+      "Frontend developer"
+    ],
+    "tech_interest": [
+      "web3",
+      "AI",
+      "Ethereum",
+      "Three.js",
+      "Solidity"
+    ],
+    "intent": [
+      "explore"
+    ],
+    "linkedin": "https://linkedin.com/in/noah-williams"
+  },
+  {
+    "name": "Sophia Mart\u00ednez",
+    "purpose": [
+      "Share knowledge"
+    ],
+    "project": [
+      "Web application"
+    ],
+    "looking_for": [
+      "UI/UX designer",
+      "Frontend developer"
+    ],
+    "tech_interest": [
+      "Figma",
+      "LLM UX",
+      "Prompt Design",
+      "Next.js"
+    ],
+    "intent": [
+      "team up"
+    ],
+    "linkedin": "https://linkedin.com/in/sophia-martinez"
+  },
+  {
+    "name": "David Nguyen",
+    "purpose": [
+      "Find a mentor"
+    ],
+    "project": [
+      "Open source project"
+    ],
+    "looking_for": [
+      "Mentor"
+    ],
+    "tech_interest": [
+      "Hackathons",
+      "LLM Infra",
+      "Startup Coaching"
+    ],
+    "intent": [
+      "mentor"
+    ],
+    "linkedin": "https://linkedin.com/in/david-nguyen"
+  },
+  {
+    "name": "amulya",
+    "purpose": [
+      "Learn new technologies"
+    ],
+    "project": [
+      "Exploring ideas"
+    ],
+    "looking_for": [
+      "Full-stack developer"
+    ],
+    "tech_interest": [
+      "fullstack",
+      "ai"
+    ],
+    "intent": [
+      "learn"
+    ],
     "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
   },
   {
-    "purpose": "to learn new tech through application",
-    "project": "ai matchmaking agent for hackathons",
-    "looking_for": "coders, builders",
-    "tech_interest": [
-      "AI"
+    "name": "Sri",
+    "purpose": [
+      "Find a mentor"
     ],
-    "intent": "founder",
-    "linkedin": "linkedin.com/suprabhat-tripathi/"
+    "looking_for": [
+      "Full-stack developer"
+    ],
+    "tech_interest": [
+      "AI/ML"
+    ],
+    "intent": [
+      "learn"
+    ],
+    "linkedin": "https://www.linkedin.com/in/amulyayakkala/",
+    "project": [
+      "AI/ML application"
+    ]
   },
   {
-    "purpose": "to know more ABOUT AI",
-    "project": "PLATFORM FOR PROCUREMENT",
-    "looking_for": "TECHNICAL EXPER",
-    "tech_interest": [
-      "AI"
+    "name": "Ramu",
+    "purpose": [
+      "Find a cofounder",
+      "Learn new technologies",
+      "Explore opportunities"
     ],
-    "intent": "MENTOR",
-    "linkedin": "https://www.linkedin.com/in/amulyayakkala/"
+    "looking_for": [
+      "Backend developer",
+      "AI/ML engineer",
+      "Co-founder"
+    ],
+    "tech_interest": [
+      "AI/ML",
+      "Web Development",
+      "Mobile Development"
+    ],
+    "intent": [
+      "cofound",
+      "team up",
+      "collaborate"
+    ],
+    "linkedin": "https://www.linkedin.com/in/amulyayakkala/",
+    "project": [
+      "AI/ML application",
+      "Web application",
+      "Mobile app"
+    ]
+  },
+  {
+    "name": "amu",
+    "purpose": [
+      "Find a cofounder"
+    ],
+    "project": [
+      "Web application"
+    ],
+    "looking_for": [
+      "Backend developer"
+    ],
+    "tech_interest": [
+      "Web Development"
+    ],
+    "intent": [
+      "cofound"
+    ],
+    "linkedin": "www.linkwdin.com/amu"
   }
 ]

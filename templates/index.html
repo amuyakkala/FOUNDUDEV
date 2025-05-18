@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENTIC STARTUP RAGATHON</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">AGENTIC STARTUP RAGATHON</h1>
+    </div>
+
+            <div class="user-list" id="userList">
+                <!-- User list will be populated dynamically -->
+    </div>
+    
+            <div class="matchmaking-section">
+                <h2 class="matchmaking-title">Find Your Match</h2>
+                <div class="matchmaking-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0/3 messages needed</div>
+                </div>
+                <button class="match-button" id="matchButton" disabled>
+                    <i class="fas fa-users"></i> Find Match
+                </button>
+        </div>
+        </aside>
+        
+        <!-- Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <button class="menu-button" id="menuButton">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="chat-title">Chat with Synthia</h2>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Initial welcome message -->
+                <div class="message bot">
+                    <div class="message-content">
+                        {{ welcome_message | safe }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Type your message..."
+                        rows="1"
+                        disabled
+                    ></textarea>
+                    <button class="send-button" id="sendButton" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Match Result Modal -->
+    <div class="modal-overlay" id="matchModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Match Found! 🎉</h2>
+            </div>
+            <div class="modal-content" id="matchContent">
+                <!-- Match content will be populated dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="match-button" id="closeModal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentUser = null;
+        let messageCount = 0;
+        
+        // DOM Elements
+        const userList = document.getElementById('userList');
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const matchButton = document.getElementById('matchButton');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.querySelector('.sidebar');
+        const toastContainer = document.getElementById('toastContainer');
+        const matchModal = document.getElementById('matchModal');
+        const matchContent = document.getElementById('matchContent');
+        const closeModal = document.getElementById('closeModal');
+        
+        // Check if user is logged in
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/users');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const data = await response.json();
+                if (!data.users) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Enable chat
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                
+                // Update UI
+                updateUserList(data.users);
+                updateMatchButton();
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+        
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+        
+        function updateMatchButton() {
+            const progress = (messageCount / 3) * 100;
+            progressFill.style.width = `${Math.min(progress, 100)}%`;
+            progressText.textContent = `${messageCount}/3 messages needed`;
+            matchButton.disabled = messageCount < 3;
+        }
+        
+        function updateUserList(users) {
+            userList.innerHTML = users.map(user => `
+                <div class="user-item">
+                    <div class="user-avatar">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-status">
+                            ${user.conversation_count} messages
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${content}
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Event Handlers
+        async function handleSendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            try {
+                // Add user message
+            addMessage(message, true);
+            messageInput.value = '';
+
+                // Show loading state
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'message bot';
+                loadingDiv.innerHTML = '<div class="loading"></div>';
+                chatMessages.appendChild(loadingDiv);
+                
+                // Send to server
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!response.ok) throw new Error('Failed to send message');
+
+                const data = await response.json();
+                
+                // Remove loading state
+                loadingDiv.remove();
+                
+                // Add bot response
+                addMessage(data.response.html_response);
+                
+                // Update message count and match button
+                messageCount++;
+                updateMatchButton();
+                
+                // Update user list
+                const usersResponse = await fetch('/users');
+                const usersData = await usersResponse.json();
+                updateUserList(usersData.users);
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+        
+        async function handleMatchmaking() {
+            try {
+                matchButton.disabled = true;
+                matchButton.innerHTML = '<div class="loading"></div>';
+                
+                const response = await fetch('/match', {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Matchmaking failed');
+                }
+                
+                const data = await response.json();
+                
+                // Show match result in modal
+                matchContent.innerHTML = data.html_explanation;
+                matchModal.style.display = 'flex';
+                
+                showToast('Match found! 🎉');
+            } catch (error) {
+                showToast(error.message, 'error');
+            } finally {
+                matchButton.disabled = false;
+                matchButton.innerHTML = '<i class="fas fa-users"></i> Find Match';
+            }
+        }
+        
+        // Event Listeners
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+        
+        sendButton.addEventListener('click', handleSendMessage);
+        matchButton.addEventListener('click', handleMatchmaking);
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        closeModal.addEventListener('click', () => {
+            matchModal.style.display = 'none';
+        });
+        
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Check login status on page load
+        checkLoginStatus();
+    </script>
+</body>
+</html> 

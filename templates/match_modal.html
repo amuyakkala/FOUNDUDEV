@@ -1,0 +1,353 @@
+<div class="modal-overlay" id="matchModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-heart"></i> Match Found!
+            </h2>
+            <button class="modal-close" onclick="closeMatchModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="match-profile">
+                <div class="match-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="match-name" id="matchName"></h3>
+                <div class="match-score">
+                    <div class="score-circle">
+                        <span id="matchScore">0</span>%
+                    </div>
+                    <span class="score-label">Match Score</span>
+                </div>
+            </div>
+            
+            <div class="match-details">
+                <div class="match-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-star"></i> Why You Match
+                    </h4>
+                    <div class="section-content" id="matchExplanation"></div>
+                </div>
+                
+                <div class="match-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-lightbulb"></i> Potential Collaboration
+                    </h4>
+                    <div class="section-content" id="collaborationIdeas"></div>
+                </div>
+                
+                <div class="match-section">
+                    <h4 class="section-title">
+                        <i class="fas fa-comments"></i> Next Steps
+                    </h4>
+                    <div class="section-content">
+                        <ul class="next-steps-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Start a conversation in the chat
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Share your project ideas
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Discuss potential collaboration
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="modal-button secondary" onclick="closeMatchModal()">
+                <i class="fas fa-times"></i> Close
+            </button>
+            <button class="modal-button primary" onclick="startChat()">
+                <i class="fas fa-comments"></i> Start Chat
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition-fast);
+    }
+    
+    .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .modal-content {
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-lg);
+        transform: translateY(20px);
+        transition: var(--transition-fast);
+    }
+    
+    .modal-overlay.show .modal-content {
+        transform: translateY(0);
+    }
+    
+    .modal-header {
+        padding: var(--spacing-lg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .modal-title i {
+        color: var(--primary);
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: var(--spacing-xs);
+        border-radius: var(--radius-sm);
+        transition: var(--transition-fast);
+    }
+    
+    .modal-close:hover {
+        background-color: var(--border);
+        color: var(--text-primary);
+    }
+    
+    .modal-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .match-profile {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .match-avatar {
+        width: 80px;
+        height: 80px;
+        background-color: var(--primary-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto var(--spacing-md);
+    }
+    
+    .match-avatar i {
+        font-size: 2rem;
+        color: var(--primary);
+    }
+    
+    .match-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .match-score {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .score-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .score-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+    
+    .match-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-lg);
+    }
+    
+    .match-section {
+        background-color: var(--background);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-md);
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .section-title i {
+        color: var(--primary);
+    }
+    
+    .section-content {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+    
+    .next-steps-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .next-steps-list li {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .next-steps-list i {
+        color: var(--success);
+    }
+    
+    .modal-footer {
+        padding: var(--spacing-lg);
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--spacing-md);
+    }
+    
+    .modal-button {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .modal-button.primary {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+    
+    .modal-button.primary:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .modal-button.secondary {
+        background-color: var(--background);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+    }
+    
+    .modal-button.secondary:hover {
+        background-color: var(--border);
+    }
+    
+    @media (max-width: 640px) {
+        .modal-content {
+            width: 95%;
+            margin: var(--spacing-md);
+        }
+        
+        .modal-footer {
+            flex-direction: column;
+        }
+        
+        .modal-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    function showMatchModal(match) {
+        const modal = document.getElementById('matchModal');
+        const matchName = document.getElementById('matchName');
+        const matchScore = document.getElementById('matchScore');
+        const matchExplanation = document.getElementById('matchExplanation');
+        const collaborationIdeas = document.getElementById('collaborationIdeas');
+        
+        matchName.textContent = match.name;
+        matchScore.textContent = Math.round(match.score * 100);
+        matchExplanation.innerHTML = match.explanation;
+        collaborationIdeas.innerHTML = match.collaboration_ideas;
+        
+        modal.classList.add('show');
+    }
+    
+    function closeMatchModal() {
+        const modal = document.getElementById('matchModal');
+        modal.classList.remove('show');
+    }
+    
+    function startChat() {
+        const matchName = document.getElementById('matchName').textContent;
+        const messageInput = document.querySelector('.message-input');
+        const sendButton = document.querySelector('.send-button');
+        
+        messageInput.value = `Hi ${matchName}! I'd like to discuss our potential collaboration.`;
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        
+        closeMatchModal();
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('matchModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+            closeMatchModal();
+        }
+    });
+</script> 

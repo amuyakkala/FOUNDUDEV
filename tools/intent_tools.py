@@ -2,77 +2,96 @@ import groq
 import json
 import os
 from dotenv import load_dotenv
+from system_prompt import SYSTEM_PROMPT
 
 # Load environment variables from .env file
 load_dotenv()
 
+# Get API key from environment
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY environment variable is not set")
+
+# Initialize Groq client
+client = groq.Client(api_key=GROQ_API_KEY)
+
 def parse_profile(text: str) -> dict:
-    prompt = f"""
-You are an onboarding assistant. Extract the following fields from the user's input and return them as a JSON object:
+    """Parse a profile from natural language input using the system prompt context."""
+    prompt = f"""You are {SYSTEM_PROMPT['systemInstruction']['name']}, analyzing user input to extract profile information.
 
-- purpose: Why they're attending
-- project: What they're building
+Extract a user profile from this text. Return a JSON object with these fields:
+- name: First name only (REQUIRED - extract from text or use "Unknown" if not found)
+- purpose: Why they're attending (from {SYSTEM_PROMPT['eventDetails']['targetAudience']})
+- project: What they're building (should align with {SYSTEM_PROMPT['eventDetails']['tracks']})
 - looking_for: Who they want to meet
-- tech_interest: A list of relevant tools, tech, or domains
-- intent: What kind of collaboration they seek (e.g., cofound, mentor, explore)
-- linkedin: Their LinkedIn URL if given
+- tech_interest: List of technologies/interests (should include {', '.join(SYSTEM_PROMPT['eventDetails']['techStack'].keys())} if relevant)
+- intent: Their primary goal (cofound, team up, mentor, learn, explore)
+- linkedin: Their LinkedIn URL (if mentioned)
 
-User message:
-{text}
+Text: {text}
 
-Return only a clean JSON object with all the above fields filled in, like this:
-
-{{
-  "purpose": "...",
-  "project": "...",
-  "looking_for": "...",
-  "tech_interest": ["...", "..."],
-  "intent": "...",
-  "linkedin": "..."
-}}
-
-Be concise, structured, and never include explanations or text outside the JSON. If the user doesn't give LinkedIn, just return an empty string.
+Return ONLY the JSON object, no other text. If a field is not mentioned, use an empty string or empty list as appropriate.
 """
-
-    client = groq.Client(api_key=os.getenv("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"))
-    response = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    # Debugging: Print the raw response
-    print("Raw API Response:", response.choices[0].message.content)
-
-    return json.loads(response.choices[0].message.content)
+    try:
+        response = client.chat.completions.create(
+            model=SYSTEM_PROMPT["runSettings"]["model"],
+            messages=[{"role": "user", "content": prompt}],
+            temperature=SYSTEM_PROMPT["runSettings"]["temperature"],
+            top_p=SYSTEM_PROMPT["runSettings"]["topP"],
+            max_tokens=SYSTEM_PROMPT["runSettings"]["maxOutputTokens"]
+        )
+        
+        # Parse the response
+        try:
+            result = json.loads(response.choices[0].message.content.strip())
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON response: {e}")
+            return {"name": "Unknown"}
+        
+        # Ensure tech_interest is a list
+        if "tech_interest" in result:
+            if isinstance(result["tech_interest"], str):
+                result["tech_interest"] = [result["tech_interest"]]
+        
+        # Ensure name is present
+        if "name" not in result or not result["name"]:
+            result["name"] = "Unknown"
+            
+        return result
+    except Exception as e:
+        print(f"Error parsing profile: {e}")
+        return {"name": "Unknown"}  # Return at least name field on error
 
 def parse_field(field: str, user_reply: str) -> dict:
-    prompt = f"""
-You are extracting a single field: "{field}" from this user message:
+    """Parse a single field from user input using the system prompt context."""
+    prompt = f"""You are {SYSTEM_PROMPT['systemInstruction']['name']}, analyzing user input for a specific field.
 
-\"\"\"{user_reply}\"\"\"
+Field to extract: {field}
 
-Return ONLY valid JSON like:
-{{ "{field}": "..." }}
+Context about the field:
+- If 'purpose': Should align with {SYSTEM_PROMPT['eventDetails']['targetAudience']}
+- If 'project': Should align with {SYSTEM_PROMPT['eventDetails']['tracks']}
+- If 'tech_interest': Should include {', '.join(SYSTEM_PROMPT['eventDetails']['techStack'].keys())} if relevant
 
-If the message is empty or unclear, return:
-{{ "{field}": "" }}
+User input: {user_reply}
+
+Return a JSON object with just the {field} field. If the input is invalid or empty, return an empty object {{}}.
 """
-
-    client = groq.Client(api_key=os.getenv("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"))
-    response = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    content = response.choices[0].message.content.strip()
-
-    # Fallback if empty
-    if not content:
-        print(f"⚠️ LLM returned empty for field '{field}', defaulting to empty string.")
-        return {field: ""}
-
     try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        print(f"❌ LLM response was invalid JSON for field '{field}':\n{content}")
-        return {field: ""} 
+        response = client.chat.completions.create(
+            model=SYSTEM_PROMPT["runSettings"]["model"],
+            messages=[{"role": "user", "content": prompt}],
+            temperature=SYSTEM_PROMPT["runSettings"]["temperature"],
+            top_p=SYSTEM_PROMPT["runSettings"]["topP"],
+            max_tokens=SYSTEM_PROMPT["runSettings"]["maxOutputTokens"]
+        )
+        
+        # Parse the response
+        try:
+            result = json.loads(response.choices[0].message.content.strip())
+            return result
+        except json.JSONDecodeError:
+            return {}
+    except Exception as e:
+        print(f"Error parsing field: {e}")
+        return {} 
